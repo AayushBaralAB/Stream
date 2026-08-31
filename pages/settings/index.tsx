@@ -6,7 +6,7 @@ import { useAuthGuard } from '@/lib/authGuard';
 
 export default function SettingsPage() {
   const { checking } = useAuthGuard();
-  const [appName, setAppName] = useState('QC Live');
+  const [appName, setAppName] = useState('AB Streaming Software');
   const [logoPath, setLogoPath] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export default function SettingsPage() {
       const res = await axios.get('/api/settings');
       const s = res.data?.settings;
       if (s) {
-        setAppName(s.appName || 'QC Live');
+        setAppName(s.appName || 'AB Streaming Software');
         setLogoPath(s.logoPath || null);
       }
     } catch (error) {

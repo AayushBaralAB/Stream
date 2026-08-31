@@ -46,7 +46,7 @@ interface MockDb {
   streams: MockStream[];
 }
 
-const DB_KEY = 'qc-live-demo-db';
+const DB_KEY = 'ab-streaming-demo-db';
 const SESSION_KEY = 'streaming-app-session';
 
 let objectUrls = new Map<string, string>();
@@ -80,7 +80,7 @@ function seedDb(): MockDb {
   const now = Date.now();
   return {
     settings: {
-      appName: 'QC Live',
+      appName: 'AB Streaming Software',
       logoPath: withBase('/uploads/app-logo.svg'),
     },
     videos: [

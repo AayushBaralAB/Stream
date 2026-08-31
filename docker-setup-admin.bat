@@ -2,7 +2,7 @@
 setlocal
 
 echo ============================================================
-echo  QC Live - Docker/WSL2 setup script
+echo  AB Streaming Software - Docker/WSL2 setup script
 echo  Run this as Administrator. It will enable required Windows
 echo  features and then reboot the machine automatically.
 echo ============================================================
@@ -30,7 +30,7 @@ echo All features enabled. The machine needs to reboot to finish.
 echo.
 set /p REBOOTNOW="Reboot now? (Y/N): "
 if /i "%REBOOTNOW%"=="Y" (
-    shutdown /r /t 5 /c "QC Live setup - rebooting to finish Docker/WSL2 setup"
+    shutdown /r /t 5 /c "AB Streaming Software setup - rebooting to finish Docker/WSL2 setup"
 ) else (
     echo Please reboot manually before using Docker.
 )

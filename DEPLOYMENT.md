@@ -1,4 +1,4 @@
-# QC Live - Deployment Guide
+# AB Streaming Software - Deployment Guide
 
 ## GitHub Pages (Static Demo Build)
 
@@ -41,8 +41,8 @@ Demo mode login: **admin / admin**.
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/your-repo/qc-live.git
-cd qc-live
+git clone https://github.com/your-repo/ab-streaming-software.git
+cd ab-streaming-software
 npm run setup
 ```
 
@@ -96,7 +96,7 @@ npm install -g pm2
 // ecosystem.config.js
 module.exports = {
   apps: [{
-    name: 'qc-live',
+    name: 'ab-streaming-software',
     script: 'npm',
     args: 'start',
     env: {
@@ -168,7 +168,7 @@ curl http://localhost:3000/api/health
 ### 3. Monitor Logs
 ```bash
 # PM2
-pm2 logs qc-live
+pm2 logs ab-streaming-software
 
 # Docker
 docker-compose -f docker-compose.production.yml logs -f
@@ -265,4 +265,4 @@ For issues or questions:
 
 ---
 
-© 2026 QC Live by Aayush Baral
+© 2026 AB Streaming Software by Aayush Baral

@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [appName, setAppName] = useState('QC Live');
+  const [appName, setAppName] = useState('AB Streaming Software');
   const [logoPath, setLogoPath] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function LoginPage() {
       .then((res) => {
         const s = res.data?.settings;
         if (s) {
-          setAppName(s.appName || 'QC Live');
+          setAppName(s.appName || 'AB Streaming Software');
           setLogoPath(s.logoPath || null);
         }
       })

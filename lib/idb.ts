@@ -1,4 +1,4 @@
-const DB_NAME = 'qc-live-blobs';
+const DB_NAME = 'ab-streaming-blobs';
 const STORE_NAME = 'videos';
 
 function openDb(): Promise<IDBDatabase> {

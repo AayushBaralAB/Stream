@@ -15,7 +15,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const router = useRouter();
-  const [settings, setSettings] = useState<AppSettings>({ appName: 'QC Live', logoPath: null });
+  const [settings, setSettings] = useState<AppSettings>({ appName: 'AB Streaming Software', logoPath: null });
 
   useEffect(() => {
     axios
@@ -23,7 +23,7 @@ export default function Layout({ children }: LayoutProps) {
       .then((res) => {
         const s = res.data?.settings;
         if (s) {
-          setSettings({ appName: s.appName || 'QC Live', logoPath: s.logoPath || null });
+          setSettings({ appName: s.appName || 'AB Streaming Software', logoPath: s.logoPath || null });
           document.title = s.appName || 'Streaming Application';
         }
       })
