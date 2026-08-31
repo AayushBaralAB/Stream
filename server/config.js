@@ -19,6 +19,7 @@ const config = {
   SESSION_SECRET: process.env.SESSION_SECRET || '',
   SESSION_TTL_SECONDS: Number(process.env.SESSION_TTL_SECONDS || 60 * 60 * 24 * 7),
   COOKIE_SECURE: process.env.COOKIE_SECURE === '1' || process.env.COOKIE_SECURE === 'true' || isProd,
+  APP_URL: process.env.APP_URL || '',
   ADMIN_USERNAME: process.env.ADMIN_USERNAME || 'admin',
   ADMIN_PASSWORD_HASH: process.env.ADMIN_PASSWORD_HASH || '',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',

@@ -18,12 +18,16 @@ services:
       ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
       MONGODB_URI: ${MONGODB_URI:-}
       MONGODB_DB: ${MONGODB_DB:-ab_streaming}
+      APP_URL: ${APP_URL:-}
       PORT: 3000
       UPLOAD_DIR: /data/uploads
       DATA_DIR: /data
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-2147483648}
     volumes:
-      - streaming-data:/data
+      # Persistent storage lives on the host under ${STREAM_DATA_DIR}
+      # (default ./data). Uploaded videos are kept in <dir>/uploads.
+      - ${STREAM_DATA_DIR:-./data}:/data
+      - ${STREAM_DATA_DIR:-./data}/uploads:/data/uploads
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/health"]
       interval: 30s
@@ -34,7 +38,3 @@ services:
       resources:
         limits:
           memory: ${MEMORY_LIMIT:-2G}
-
-volumes:
-  streaming-data:
-    name: ab-streaming-data
