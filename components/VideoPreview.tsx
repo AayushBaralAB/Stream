@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Video } from '@/types/video';
+import { withBase } from '@/lib/basePath';
 
 interface VideoPreviewProps {
   video: Video;
@@ -15,7 +16,7 @@ export default function VideoPreview({ video, onClose }: VideoPreviewProps) {
     localSource.startsWith('http') ||
     localSource.startsWith('/')
       ? localSource
-      : `/uploads/${video.filename}`;
+      : withBase(`/uploads/${video.filename}`);
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>

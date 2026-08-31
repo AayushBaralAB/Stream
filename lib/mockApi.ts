@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { isIdbAvailable, saveBlob, getBlob, removeBlob } from './idb';
+import { withBase } from './basePath';
 
 /* ------------------------------------------------------------------ *
  *  Browser demo backend.
@@ -80,15 +81,15 @@ function seedDb(): MockDb {
   return {
     settings: {
       appName: 'QC Live',
-      logoPath: '/uploads/app-logo.svg',
+      logoPath: withBase('/uploads/app-logo.svg'),
     },
     videos: [
       {
         id: 1,
         filename: '304383ed3f90d2d8b908001017b9bd3e.mp4',
         original_name: 'Sample Stream Loop Video.mp4',
-        file_path: '/uploads/304383ed3f90d2d8b908001017b9bd3e.mp4',
-        thumbnail_path: '/uploads/thumbnails/304383ed3f90d2d8b908001017b9bd3e_thumb.jpg',
+        file_path: withBase('/uploads/304383ed3f90d2d8b908001017b9bd3e.mp4'),
+        thumbnail_path: withBase('/uploads/thumbnails/304383ed3f90d2d8b908001017b9bd3e_thumb.jpg'),
         duration: 0,
         file_size: 42_317_088,
         created_at: new Date(now - 1000 * 60 * 60 * 24 * 5).toISOString(),
@@ -195,7 +196,7 @@ function simulatedStreamStats(stream: MockStream): {
 
 async function thumbRoute(filenameWithExt: string): Promise<AxiosResponse> {
   const name = filenameWithExt.replace(/_thumb\.[a-zA-Z0-9]+$/, '');
-  const real = `/uploads/thumbnails/${name}_thumb.jpg`;
+  const real = withBase(`/uploads/thumbnails/${name}_thumb.jpg`);
   try {
     const res = await fetch(real);
     if (res.ok) {

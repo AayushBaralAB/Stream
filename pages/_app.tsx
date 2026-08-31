@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import { initMockApi } from '@/lib/mockApi';
+import { withBase } from '@/lib/basePath';
 
 if (typeof window !== 'undefined') {
   initMockApi();
@@ -15,7 +16,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Streaming Application</title>
         <meta name="description" content="Professional 24/7 streaming application designed by Aayush Baral" />
         <meta name="author" content="Aayush Baral" />
-        <link rel="icon" href="/favicon.svg" />
+        <link rel="icon" href={withBase('/favicon.svg')} />
       </Head>
       <Component {...pageProps} />
       <Toaster 

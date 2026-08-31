@@ -4,6 +4,7 @@ const path = require('path');
 
 const OUT_DIR = path.join(__dirname, '..', 'out');
 const PORT = process.env.PORT || 3000;
+const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH || '').replace(/\/$/, '');
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -43,6 +44,9 @@ function serveFile(res, filePath) {
 const server = http.createServer((req, res) => {
   let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
   if (urlPath.startsWith('/')) urlPath = urlPath.slice(1);
+  if (BASE_PATH && (urlPath === BASE_PATH.slice(1) || urlPath.startsWith(BASE_PATH.slice(1) + '/'))) {
+    urlPath = urlPath.slice(BASE_PATH.length);
+  }
   let filePath = path.join(OUT_DIR, urlPath);
   if (filePath === OUT_DIR) filePath = path.join(OUT_DIR, 'index.html');
 
