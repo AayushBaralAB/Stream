@@ -88,10 +88,14 @@ export default function StreamCard({ stream, onUpdate }: StreamCardProps) {
         await axios.post('/api/streams/stop', { streamId: stream.id });
         toast.success('Stream stopped');
       } else {
-        await axios.post('/api/streams/start', {
-          streamId: stream.id
+        const res = await axios.post('/api/streams/start', {
+          streamId: stream.id,
         });
-        toast.success('Stream started');
+        if (res.data?.connected) {
+          toast.success('Stream started — connected to server');
+        } else {
+          toast.success('Stream started');
+        }
       }
       onUpdate();
     } catch (error: any) {
@@ -111,6 +115,12 @@ export default function StreamCard({ stream, onUpdate }: StreamCardProps) {
         return 'bg-gray-500';
     }
   };
+
+  const rtmpUrl = stream.rtmp_url || '';
+  const rtmpSlash = rtmpUrl.lastIndexOf('/');
+  const rtmpServer = rtmpSlash > 0 ? rtmpUrl.slice(0, rtmpSlash) : rtmpUrl;
+  const rawKey = rtmpSlash >= 0 ? rtmpUrl.slice(rtmpSlash + 1) : '';
+  const maskedKey = rawKey ? '••••' + rawKey.slice(-4) : '';
 
   const getUptime = () => {
     if (!stream.started_at || stream.status !== 'running') return null;
@@ -141,6 +151,16 @@ export default function StreamCard({ stream, onUpdate }: StreamCardProps) {
             <span className="text-foreground">{stream.loop_enabled ? 'Enabled' : 'Disabled'}</span>
           </div>
         </div>
+
+        {stream.status === 'running' && (
+          <div className="flex items-center gap-2 text-xs bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded p-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+            <span className="break-all">
+              Connected to {rtmpServer}
+              {maskedKey ? ` · Key ${maskedKey}` : ''}
+            </span>
+          </div>
+        )}
         
         {stream.status === 'running' && (
           <>

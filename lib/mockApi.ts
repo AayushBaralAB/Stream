@@ -393,13 +393,27 @@ async function dispatch(config: AxiosRequestConfig): Promise<AxiosResponse> {
   if (method === 'POST' && path === '/api/streams/start') {
     const streamId = num(body, 'streamId', -1);
     const stream = db.streams.find((s) => s.id === streamId);
-    if (stream) {
-      stream.status = 'running';
-      stream.started_at = new Date().toISOString();
-      stream.error_message = null;
-      writeDb(db);
+    if (!stream) {
+      return jsonResponse({ error: 'Stream not found' }, 404);
     }
-    return jsonResponse({ success: true });
+    const rtmp = stream.rtmp_url || '';
+    const slash = rtmp.lastIndexOf('/');
+    const server = slash > 0 ? rtmp.slice(0, slash) : rtmp;
+    const streamKey = (slash >= 0 ? rtmp.slice(slash + 1) : '').trim();
+    const isPlaceholder = streamKey.toLowerCase().includes('xxxx');
+    if (!streamKey || streamKey.length < 6 || isPlaceholder || /\s/.test(streamKey)) {
+      return jsonResponse(
+        {
+          error: `Cannot connect "${stream.name}" using "${streamKey || '(no key)'}" as stream key. Edit the stream and enter your real stream key (from YouTube Studio → Go Live, or your provider).`,
+        },
+        400,
+      );
+    }
+    stream.status = 'running';
+    stream.started_at = new Date().toISOString();
+    stream.error_message = null;
+    writeDb(db);
+    return jsonResponse({ success: true, connected: true, server, streamKey });
   }
   if (method === 'POST' && path === '/api/streams/stop') {
     const streamId = num(body, 'streamId', -1);
@@ -558,6 +572,18 @@ async function mockAdapter(config: InternalAxiosRequestConfig): Promise<AxiosRes
   if (url.startsWith('/api/') || url.startsWith('api/')) {
     const response = await dispatch(config);
     response.config = config;
+    const validateStatus = config.validateStatus || ((s: number) => s >= 200 && s < 300);
+    if (!validateStatus(response.status)) {
+      return Promise.reject(
+        new axios.AxiosError(
+          `Request failed with status code ${response.status}`,
+          response.status >= 500 ? axios.AxiosError.ERR_BAD_RESPONSE : axios.AxiosError.ERR_BAD_REQUEST,
+          config,
+          response.request,
+          response,
+        ),
+      );
+    }
     return response;
   }
   throw new Error(`[demo mode] Unhandled request: ${config.method} ${url}`);
