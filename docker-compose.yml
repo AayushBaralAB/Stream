@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    container_name: personal-streaming-app
+    ports:
+      - "3000:3000"
+    environment:
+      # Authentication
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=$$2a$$10$$dhrq7Zmy4kUV8fvwNJIIVeTos8eUK8ibPQfdxdmszJcpWEBqqcj2W
+      - SESSION_SECRET=a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
+      
+      # Storage
+      - UPLOAD_DIR=/app/public/uploads
+      - MAX_FILE_SIZE=2147483648
+      
+      # Database
+      - DATABASE_PATH=/app/data/streams.db
+      
+      # App
+      - NEXT_PUBLIC_APP_NAME=Personal Streaming App
+      - NODE_ENV=production
+      
+    volumes:
+      # Persist database
+      - ./data:/app/data
+      # Persist uploaded videos
+      - ./public/uploads:/app/public/uploads
+      
+    restart: unless-stopped
+    
+    # Add more memory for video processing
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
