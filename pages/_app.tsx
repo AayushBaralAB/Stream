@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Streaming Application</title>
+        <title>AB Streaming Software</title>
         <meta name="description" content="Professional 24/7 streaming application designed by Aayush Baral" />
         <meta name="author" content="Aayush Baral" />
         <link rel="icon" href={withBase('/favicon.svg')} />
