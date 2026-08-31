@@ -269,7 +269,7 @@ export default function StreamForm({ onSuccess }: StreamFormProps) {
             required
           />
           <p className="mt-1 text-xs text-muted-foreground">
-            Enter your Twitch, Facebook, or other platform's RTMP URL
+            Enter your Twitch, Facebook, or other platform&apos;s RTMP URL
           </p>
         </div>
       )}

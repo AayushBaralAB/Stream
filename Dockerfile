@@ -1,62 +1,48 @@
-FROM node:18-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# ---------- build stage ----------
+FROM node:20-alpine AS build
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
+# Build-time static configuration (empty base path for the server mode).
+ARG NEXT_PUBLIC_BASE_PATH=
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH
+
 COPY package.json package-lock.json* ./
 RUN npm ci
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
 RUN npm run build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# ---------- production image ----------
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV PORT=3000
 
-# Install ffmpeg
-RUN apk add --no-cache ffmpeg
+# FFmpeg (used to push streams to YouTube etc.) and timezone data.
+RUN apk add --no-cache ffmpeg tzdata dumb-init
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup -S nodejs && adduser -S app -G nodejs
 
-# Create necessary directories
-RUN mkdir -p /app/data /app/public/uploads/thumbnails
-RUN chown -R nextjs:nodejs /app/data /app/public
+# Runtime dirs: static export, server code, and persistent data/upload volume.
+COPY --from=build /app/out ./out
+COPY --from=build /app/server ./server
+COPY --from=build /app/public ./public
+COPY --from=build /app/scripts ./scripts
+COPY --from=build /app/package.json /app/package-lock.json* ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-COPY --from=builder /app/public ./public
-RUN chown -R nextjs:nodejs /app/public/uploads
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Pre-create the persistent data volume mount point (owned by `app`) so
+# Docker seeds a first-use named volume with non-root ownership.
+RUN mkdir -p /data/uploads && chown -R app:nodejs /data
 
-# Copy additional files needed at runtime
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/.env.example ./.env.example
-
-# Ensure upload directories are writable
-RUN chmod -R 755 /app/public/uploads /app/data
-
-USER nextjs
-
+USER app
 EXPOSE 3000
 
-ENV PORT 3000
+VOLUME ["/data"]
 
-CMD ["node", "server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1
+
+# dense logging for docker logs; ffmpeg resumes its own streams on restart.
+CMD ["dumb-init", "node", "server/index.js"]

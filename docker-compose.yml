@@ -1,38 +1,40 @@
+# AB Streaming Software — production stack
+# All secrets come from the `.env` file next to this compose file
+# (never commit a real .env; see .env.example for the required variables).
 services:
   app:
     build: .
-    container_name: personal-streaming-app
-    ports:
-      - "3000:3000"
-    environment:
-      # Authentication
-      - AUTH_USERNAME=admin
-      - AUTH_PASSWORD=$$2a$$10$$dhrq7Zmy4kUV8fvwNJIIVeTos8eUK8ibPQfdxdmszJcpWEBqqcj2W
-      - SESSION_SECRET=a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456
-      
-      # Storage
-      - UPLOAD_DIR=/app/public/uploads
-      - MAX_FILE_SIZE=2147483648
-      
-      # Database
-      - DATABASE_PATH=/app/data/streams.db
-      
-      # App
-      - NEXT_PUBLIC_APP_NAME=Personal Streaming App
-      - NODE_ENV=production
-      
-    volumes:
-      # Persist database
-      - ./data:/app/data
-      # Persist uploaded videos
-      - ./public/uploads:/app/public/uploads
-      
+    image: ab-streaming-software:latest
+    container_name: ab-streaming-app
     restart: unless-stopped
-    
-    # Add more memory for video processing
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: production
+      TZ: Asia/Kathmandu
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?set ADMIN_USERNAME in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      MONGODB_URI: ${MONGODB_URI:-}
+      MONGODB_DB: ${MONGODB_DB:-ab_streaming}
+      PORT: 3000
+      UPLOAD_DIR: /data/uploads
+      DATA_DIR: /data
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-2147483648}
+    volumes:
+      - streaming-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     deploy:
       resources:
         limits:
-          memory: 2G
-        reservations:
-          memory: 512M
+          memory: ${MEMORY_LIMIT:-2G}
+
+volumes:
+  streaming-data:
+    name: ab-streaming-data

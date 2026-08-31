@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { initMockApi } from '@/lib/mockApi';
 import { withBase } from '@/lib/basePath';
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && !(window as any).__AB_LIVE__) {
   initMockApi();
 }
 

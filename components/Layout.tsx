@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import toast from 'react-hot-toast';
+import { destroyClientSession } from '@/lib/auth';
 
 interface AppSettings {
   appName: string;
@@ -33,9 +33,11 @@ export default function Layout({ children }: LayoutProps) {
   const handleLogout = async () => {
     try {
       await axios.post('/api/auth/logout');
+    } catch {
+      /* even if the server call fails, clear the client session */
+    } finally {
+      destroyClientSession();
       router.push('/auth/login');
-    } catch (error) {
-      toast.error('Failed to logout');
     }
   };
 

@@ -1,43 +1,42 @@
 {
   "name": "ab-streaming-software",
-  "version": "1.0.0",
-  "description": "AB Streaming Software - Professional Streaming Application",
+  "version": "2.0.0",
+  "description": "AB Streaming Software - Professional 24/7 streaming application",
   "author": "Aayush Baral",
   "repository": {
     "type": "git",
-    "url": "https://github.com/himanshu-hivecorp"
+    "url": "https://github.com/AayushBaralAB/Stream"
   },
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node scripts/serve-static.js",
+    "start": "node server/index.js",
+    "server": "node server/index.js",
     "preview": "node scripts/serve-static.js",
     "lint": "next lint",
-    "generate-password": "node scripts/generate-password-hash.js"
+    "typecheck": "tsc --noEmit",
+    "generate-password": "node scripts/generate-password-hash.js",
+    "smoke": "node scripts/smoke-test.js"
   },
   "dependencies": {
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
-    "better-sqlite3": "^9.2.2",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
-    "fluent-ffmpeg": "^2.1.2",
-    "formidable": "^3.5.1",
-    "iron-session": "^8.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.7.0",
+    "multer": "^1.4.5-lts.1",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/fluent-ffmpeg": "^2.1.24",
-    "@types/formidable": "^3.4.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -22,7 +22,7 @@ rl.question('Enter password to hash: ', async (password) => {
     const hash = await bcrypt.hash(password, 10);
     console.log('\nGenerated hash:');
     console.log(hash);
-    console.log('\nAdd this to your .env.local file:');
+    console.log('\nAdd this to your server .env file:');
     console.log(`ADMIN_PASSWORD_HASH=${hash}`);
   } catch (error) {
     console.error('\nError generating hash:', error.message);

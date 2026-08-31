@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { createClientSession } from '@/lib/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function LoginPage() {
 
     try {
       await axios.post('/api/auth/login', { username, password });
+      createClientSession(username);
       toast.success('Login successful!');
       router.push('/dashboard');
     } catch (error) {
@@ -54,9 +56,11 @@ export default function LoginPage() {
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Sign in to manage your streams
           </p>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            Demo login — Username: <span className="text-primary">admin</span> · Password: <span className="text-primary">admin</span>
-          </p>
+          {typeof window !== 'undefined' && !(window as any).__AB_LIVE__ && (
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Demo login — Username: <span className="text-primary">admin</span> · Password: <span className="text-primary">admin</span>
+            </p>
+          )}
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
