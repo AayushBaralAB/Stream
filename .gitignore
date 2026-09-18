@@ -1,0 +1,14 @@
+node_modules/
+.env
+dist/
+build/
+/data/videos/*
+/data/logos/*
+/data/hls/*
+!/data/videos/.gitkeep
+!/data/logos/.gitkeep
+!/data/hls/.gitkeep
+*.log
+.DS_Store
+.vscode/
+.idea/
